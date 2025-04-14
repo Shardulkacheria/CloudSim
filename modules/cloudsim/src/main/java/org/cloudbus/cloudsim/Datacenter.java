@@ -468,10 +468,11 @@ public class Datacenter extends SimEntity {
 	 */
 	protected void processVmMigrate(SimEvent ev, boolean ack) {
 		Object tmp = ev.getData();
-		if (!(tmp instanceof GuestMapping migrate)) {
+		if (!(tmp instanceof GuestMapping)) {
 			throw new ClassCastException("The data object must be GuestMapping");
 		}
-
+        
+        GuestMapping migrate = (GuestMapping) tmp;
         GuestEntity vm = migrate.vm();
 		HostEntity host = migrate.host();
 		
@@ -544,13 +545,23 @@ public class Datacenter extends SimEntity {
 
 		// begins executing ....
 		switch (tag) {
-			case CLOUDLET_CANCEL -> processCloudletCancel(cloudletId, userId, vmId);
-			case CLOUDLET_PAUSE -> processCloudletPause(cloudletId, userId, vmId, false);
-			case CLOUDLET_PAUSE_ACK -> processCloudletPause(cloudletId, userId, vmId, true);
-			case CLOUDLET_RESUME -> processCloudletResume(cloudletId, userId, vmId, false);
-			case CLOUDLET_RESUME_ACK -> processCloudletResume(cloudletId, userId, vmId, true);
-			default -> {
-			}
+			case CLOUDLET_CANCEL:
+				processCloudletCancel(cloudletId, userId, vmId);
+				break;
+			case CLOUDLET_PAUSE:
+				processCloudletPause(cloudletId, userId, vmId, false);
+				break;
+			case CLOUDLET_PAUSE_ACK:
+				processCloudletPause(cloudletId, userId, vmId, true);
+				break;
+			case CLOUDLET_RESUME:
+				processCloudletResume(cloudletId, userId, vmId, false);
+				break;
+			case CLOUDLET_RESUME_ACK:
+				processCloudletResume(cloudletId, userId, vmId, true);
+				break;
+			default:
+				break;
 		}
 
 	}

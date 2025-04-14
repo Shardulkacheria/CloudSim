@@ -1,0 +1,49 @@
+name: Run AutoScalingExample
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up JDK 16
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: 16
+        cache: maven
+    
+    - name: Build CloudSim Core
+      run: |
+        echo "Building CloudSim core..."
+        cd modules/cloudsim
+        mvn -B clean install
+    
+    - name: Build CloudSim Examples
+      run: |
+        echo "Building CloudSim examples..."
+        cd modules/cloudsim-examples
+        mvn -B clean install
+    
+    - name: Run AutoScalingExample
+      run: |
+        echo "Running AutoScalingExample..."
+        java -cp "modules/cloudsim/target/cloudsim-7.0.0-alpha.jar:modules/cloudsim-examples/target/cloudsim-examples-7.0.0-alpha.jar" org.cloudbus.cloudsim.examples.AutoScalingExample
+    
+    - name: Build Docker image
+      run: |
+        echo "Building Docker image..."
+        docker build -t cloudsim:latest .
+    
+    - name: Run AutoScalingExample in Docker
+      run: |
+        echo "Running AutoScalingExample in Docker..."
+        docker run --rm cloudsim:latest 

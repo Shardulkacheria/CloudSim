@@ -27,47 +27,58 @@ Either clone the repository or download a [release](https://github.com/Cloudslab
 
 # Installation
 **Windows**
-1) Install Java JDK21 on your system from the [official website](https://www.oracle.com/in/java/technologies/downloads/#java21) as shown in [JDK installation instructions](https://docs.oracle.com/en/java/javase/23/install/overview-jdk-installation.html)
+1) Install Java JDK16 on your system from the [official website](https://adoptium.net/temurin/releases/?version=16)
 2) Install Maven as shown on the [official website](https://maven.apache.org/install.html)
 4) Compile and Run tests using the command prompt:
   ```prompt
   mvn clean package
   ```
-5) Run an example (e.g., CloudSimExample1) in cloudsim-examples using the command prompt:
+5) Run an example (e.g., AutoScalingExample) in cloudsim-examples using the command prompt:
 ```prompt
-mvn exec:java -pl modules/cloudsim-examples/ -Dexec.mainClass=org.cloudbus.cloudsim.examples.CloudSimExample1
+java -cp "modules/cloudsim/target/cloudsim-7.0.0-alpha.jar;modules/cloudsim-examples/target/cloudsim-examples-7.0.0-alpha.jar" org.cloudbus.cloudsim.examples.AutoScalingExample
 ```
 
 **Linux**
-  1) Install Java JDK21 on your system:
+  1) Install Java JDK16 on your system:
   - On Debian-based Linux & Windows WSL2: 
     ```bash
-    sudo apt install openjdk-21-jdk
+    sudo apt install openjdk-16-jdk
     ```
   - On Red Hat-based Linux:  
     ```bash  
-    sudo yum install java-21-openjdk
+    sudo dnf install java-16-openjdk
     ```
-  2) Set Java JDK21 as default: 
-  - On Debian-based Linux & Windows WSL2:
-    ```bash
-    sudo update-java-alternatives --set java-1.21.0-openjdk-amd64
-    ```
-  - On Red Hat-based Linux: 
-    ```bash
-    sudo update-alternatives --config 'java'
-    ```
-  3) Install Maven as shown on the [Official Website](https://maven.apache.org/install.html)
-  4) Compile and run tests using the terminal:
+  2) Install Maven as shown on the [Official Website](https://maven.apache.org/install.html)
+  3) Compile and run tests using the terminal:
   ```bash
   mvn clean package
   ```
-  5) Run an example (e.g., CloudSimExample1) in cloudsim-examples using the terminal:
+  4) Run an example (e.g., AutoScalingExample) in cloudsim-examples using the terminal:
   ```bash
-  mvn exec:java -pl modules/cloudsim-examples/ -Dexec.mainClass=org.cloudbus.cloudsim.examples.CloudSimExample1
+  java -cp "modules/cloudsim/target/cloudsim-7.0.0-alpha.jar:modules/cloudsim-examples/target/cloudsim-examples-7.0.0-alpha.jar" org.cloudbus.cloudsim.examples.AutoScalingExample
   ```
 
-  **Suggestion:** Use an IDE such as IDEA Intellij to faciliate steps 4) and 5)
+**Docker**
+You can also run the examples using Docker:
+```bash
+# Build the Docker image
+docker build -t cloudsim:latest .
+
+# Run the AutoScalingExample
+docker run --rm cloudsim:latest
+```
+
+**GitHub Actions**
+This project uses GitHub Actions for continuous integration. The workflow will:
+1. Build the project with Java 16
+2. Run tests
+3. Build a Docker image
+4. Create a release with the built JAR files
+
+To view GitHub Actions:
+1. Go to the GitHub repository
+2. Click on the "Actions" tab
+3. View the workflow runs
 
 # Preferred Publication #
   * Remo Andreoli, Jie Zhao, Tommaso Cucinotta, and Rajkumar Buyya, [CloudSim 7G: An Integrated Toolkit for Modeling and Simulation of Future Generation Cloud Computing Environments](https://onlinelibrary.wiley.com/doi/10.1002/spe.3413), Software: Practice and Experience, 2025.

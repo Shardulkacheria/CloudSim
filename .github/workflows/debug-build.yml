@@ -1,0 +1,96 @@
+name: CloudSim Debug Build
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  debug-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: System info
+      run: |
+        echo "OS information:"
+        cat /etc/os-release
+        echo "Java versions available:"
+        ls -la /usr/lib/jvm/
+        echo "Environment variables:"
+        env | sort
+    
+    - name: Set up JDK 8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 8
+    
+    - name: Project structure
+      run: |
+        echo "Project root files:"
+        ls -la
+        echo "Maven structure:"
+        find . -name "pom.xml" -type f | sort
+        echo "Java files count:"
+        find . -name "*.java" | wc -l
+        echo "Main application class:"
+        find . -name "AutoScalingExample.java" -type f
+    
+    - name: Maven configuration
+      run: |
+        echo "Maven version:"
+        mvn --version
+        echo "Maven settings:"
+        cat ~/.m2/settings.xml || echo "No settings file found"
+        echo "Maven repository:"
+        ls -la ~/.m2/repository/ || echo "Repository not found"
+    
+    - name: Build core module
+      run: |
+        echo "Building core module..."
+        cd modules/cloudsim
+        cat pom.xml | grep -A 5 -B 5 version
+        mvn -X clean install
+      continue-on-error: true
+      
+    - name: Check if core JAR exists
+      run: |
+        echo "Checking for cloudsim core JAR:"
+        find modules/cloudsim -name "*.jar"
+    
+    - name: Build examples module
+      run: |
+        echo "Building examples module..."
+        cd modules/cloudsim-examples
+        cat pom.xml | grep -A 5 -B 5 version
+        mvn -X clean install
+      continue-on-error: true
+    
+    - name: Check if examples JAR exists
+      run: |
+        echo "Checking for examples JAR:"
+        find modules/cloudsim-examples -name "*.jar"
+    
+    - name: Show dependency tree
+      run: |
+        echo "Maven dependency tree:"
+        mvn dependency:tree -e
+      continue-on-error: true
+    
+    - name: Compile errors report
+      run: |
+        echo "Searching for compilation errors:"
+        find . -name "*.log" -exec grep -l "ERROR" {} \; | xargs cat || echo "No error logs found"
+        echo "Maven error keywords:"
+        find . -type f -name "*.log" -exec grep -l "could not resolve" {} \; | xargs cat || echo "No dependency errors found"
+    
+    - name: JDK compatibility check
+      run: |
+        echo "Trying with Java 8:"
+        java -version
+        cd modules/cloudsim
+        mvn clean -DskipTests
+        cd ../cloudsim-examples
+        mvn compile 

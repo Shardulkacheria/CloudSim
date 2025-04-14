@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-slim
+FROM openjdk:8-jdk-slim
 
 WORKDIR /app
 
@@ -24,9 +24,9 @@ RUN mvn clean package
 WORKDIR /app/modules/cloudsim-examples
 
 # Command to run the AutoScalingExample by default
-CMD ["mvn", "exec:java", "-Dexec.mainClass=org.cloudbus.cloudsim.examples.AutoScalingExample"]
+CMD ["java", "-cp", "target/cloudsim-examples-7.0.0-alpha.jar:../cloudsim/target/cloudsim-7.0.0-alpha.jar", "org.cloudbus.cloudsim.examples.AutoScalingExample"]
 
 # Usage example:
 # Build:  docker build -t cloudsim:latest .
 # Run:    docker run --rm cloudsim:latest
-# Run different example: docker run --rm cloudsim:latest mvn exec:java -Dexec.mainClass=org.cloudbus.cloudsim.examples.CloudSimExample1 
+# Run different example: docker run --rm cloudsim:latest java -cp target/cloudsim-examples-7.0.0-alpha.jar:../cloudsim/target/cloudsim-7.0.0-alpha.jar org.cloudbus.cloudsim.examples.CloudSimExample1 

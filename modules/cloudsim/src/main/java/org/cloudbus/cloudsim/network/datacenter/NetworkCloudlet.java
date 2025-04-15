@@ -132,7 +132,7 @@ public class NetworkCloudlet extends Cloudlet implements Comparable<NetworkCloud
 	@Override
 	public long getCloudletLength() {
 		int currStage = Math.min(currStageNum, stages.size()-1);
-		return stages.get(currStage).getTaskLength();
+		return (long) stages.get(currStage).getTaskLength();
 	}
 
 	@Override
@@ -164,7 +164,7 @@ public class NetworkCloudlet extends Cloudlet implements Comparable<NetworkCloud
 	public void stats() {
 		System.out.println("NetworkCloudlet #"+getCloudletId());
 		for (TaskStage stage : stages) {
-			System.out.println("	"+stage.getType().toString()+" "+Math.max(0, stage.getTime()));
+			System.out.println("	"+stage.getType()+" "+Math.max(0, stage.getTime()));
 		}
 	}
 
@@ -175,7 +175,6 @@ public class NetworkCloudlet extends Cloudlet implements Comparable<NetworkCloud
 
 	/**
 	 * Changes a cloudlet to the next stage.
-	 *
 	 */
 	private void goToNextStage() {
 		timeSpentCurrStage = 0;

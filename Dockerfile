@@ -2,34 +2,20 @@ FROM eclipse-temurin:16-jdk
 
 WORKDIR /app
 
-# Copy the Maven POM files
-COPY pom.xml ./
-COPY modules/cloudsim/pom.xml ./modules/cloudsim/
-COPY modules/cloudsim-examples/pom.xml ./modules/cloudsim-examples/
-COPY modules/cloudsim-examples/src/main/resources/ ./modules/cloudsim-examples/src/main/resources/
+# Copy the project files
+COPY . .
 
-# Fix POM files if necessary
-RUN sed -i 's/<n>cloudsim-package<\/n>/<name>cloudsim-package<\/name>/g' pom.xml || true && \
-    sed -i 's/<n>cloudsim<\/n>/<name>cloudsim<\/name>/g' modules/cloudsim/pom.xml || true && \
-    sed -i 's/<n>cloudsim-examples<\/n>/<name>cloudsim-examples<\/name>/g' modules/cloudsim-examples/pom.xml || true
+# Build the CloudSim module
+RUN cd modules/cloudsim && \
+    mvn clean install -DskipTests
 
-# Download all required dependencies
-RUN apt-get update && \
-    apt-get install -y maven && \
-    mvn dependency:go-offline
+# Build the CloudSim examples module
+RUN cd modules/cloudsim-examples && \
+    mvn clean package && \
+    mvn assembly:single -DdescriptorId=jar-with-dependencies
 
-# Copy the source code
-COPY modules/cloudsim/src ./modules/cloudsim/src
-COPY modules/cloudsim-examples/src ./modules/cloudsim-examples/src
-
-# Build the application
-RUN mvn clean package
-
-# Set up working directory for running examples
-WORKDIR /app/modules/cloudsim-examples
-
-# Command to run the AutoScalingExample by default
-CMD ["java", "-cp", "target/cloudsim-examples-7.0.0-alpha.jar:../cloudsim/target/cloudsim-7.0.0-alpha.jar", "org.cloudbus.cloudsim.examples.AutoScalingExample"]
+# Set the entry point to run the AutoScalingExample by default
+ENTRYPOINT ["java", "-jar", "modules/cloudsim-examples/target/cloudsim-examples-7.0.0-alpha-jar-with-dependencies.jar"]
 
 # Usage example:
 # Build:  docker build -t cloudsim:latest .

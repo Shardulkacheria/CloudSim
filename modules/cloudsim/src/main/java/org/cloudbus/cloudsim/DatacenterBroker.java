@@ -190,7 +190,7 @@ public class DatacenterBroker extends SimEntity {
 			// @TODO: should I need this?
 			// getDatacenterCharacteristicsList().clear();
 			setDatacenterRequestedIdsList(new ArrayList<>());
-			createVmsInDatacenter(getDatacenterIdsList().getFirst());
+			createVmsInDatacenter(getDatacenterIdsList().get(0));
 		}
 	}
 

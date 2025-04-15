@@ -18,8 +18,10 @@ jobs:
     - name: Clear GitHub Actions cache
       run: |
         gh extension install actions/gh-actions-cache
-        gh actions-cache delete --all
-        echo "Cache cleared"
+        REPO="${{ github.repository }}"
+        BRANCH="${{ github.ref }}"
+        echo "Deleting caches for repo: $REPO, branch: $BRANCH"
+        gh actions-cache list -R $REPO -B $BRANCH | cut -f1 | xargs -I {} gh actions-cache delete {} -R $REPO -B $BRANCH --confirm
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

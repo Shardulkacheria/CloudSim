@@ -51,6 +51,8 @@ public class NetworkCloudlet extends Cloudlet implements Comparable<NetworkCloud
 	/** Communication channel */
 	private NetworkInterfaceCard nic;
 
+	private double actualCPUTime;
+
 	public NetworkCloudlet(
 			int cloudletId,
 			long cloudletLength,
@@ -186,5 +188,21 @@ public class NetworkCloudlet extends Cloudlet implements Comparable<NetworkCloud
 			nic.getPktsToSend().add(pkt);
 			currStageNum++;
 		}
+	}
+
+	public List<TaskStage> getStages() {
+		return stages;
+	}
+
+	public void addStage(TaskStage stage) {
+		stages.add(stage);
+	}
+
+	public double getActualCPUTime() {
+		return actualCPUTime;
+	}
+
+	public void setActualCPUTime(double actualCPUTime) {
+		this.actualCPUTime = actualCPUTime;
 	}
 }

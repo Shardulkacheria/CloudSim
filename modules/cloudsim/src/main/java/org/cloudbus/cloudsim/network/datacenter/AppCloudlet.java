@@ -8,10 +8,9 @@
 
 package org.cloudbus.cloudsim.network.datacenter;
 
+import org.cloudbus.cloudsim.Cloudlet;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.cloudbus.cloudsim.Cloudlet;
 
 /**
  * AppCloudlet class represents an application which user submit for execution within a datacenter. It
@@ -45,12 +44,10 @@ public class AppCloudlet {
 	public static final int APP_Workflow = 3;
 
 	public AppCloudlet(int type, int appID, double deadline, int userId) {
-		// Access these parameters from within cList, NOT the appCloudlet object
 		this.type = type;
 		this.appID = appID;
 		this.deadline = deadline;
 		this.userId = userId;
-
 		cList = new ArrayList<>();
 	}
 
@@ -60,8 +57,8 @@ public class AppCloudlet {
 	 */
 	public List<NetworkCloudlet> getSourceCloudlets() {
 		return cList.stream()
-					.filter(networkCloudlet -> networkCloudlet.stages.getFirst().getType() != TaskStage.TaskStageStatus.WAIT_RECV)
-					.filter(networkCloudlet -> networkCloudlet.stages.getFirst().getType() != TaskStage.TaskStageStatus.WAIT_SEND)
+					.filter(networkCloudlet -> networkCloudlet.getStages().get(0).getType() != NetworkConstants.WAIT_RECV)
+					.filter(networkCloudlet -> networkCloudlet.getStages().get(0).getType() != NetworkConstants.WAIT_SEND)
 					.toList();
 	}
 
@@ -71,8 +68,8 @@ public class AppCloudlet {
 	 */
 	public List<NetworkCloudlet> getSinkCloudlets() {
 		return cList.stream()
-				.filter(networkCloudlet -> networkCloudlet.stages.getLast().getType() != TaskStage.TaskStageStatus.WAIT_RECV)
-				.filter(networkCloudlet -> networkCloudlet.stages.getLast().getType() != TaskStage.TaskStageStatus.WAIT_SEND)
+				.filter(networkCloudlet -> networkCloudlet.getStages().get(networkCloudlet.getStages().size() - 1).getType() != NetworkConstants.WAIT_RECV)
+				.filter(networkCloudlet -> networkCloudlet.getStages().get(networkCloudlet.getStages().size() - 1).getType() != NetworkConstants.WAIT_SEND)
 				.toList();
 	}
 
@@ -96,12 +93,13 @@ public class AppCloudlet {
 
 	public void updateStagesLength() {
 		for (NetworkCloudlet networkCloudlet : cList) {
-			if (!networkCloudlet.stages.isEmpty()) {
-				if (networkCloudlet.stages.get(0).type == NetworkConstants.EXECUTION) {
-					networkCloudlet.stages.get(0).setLength(networkCloudlet.getActualCPUTime());
+			List<TaskStage> stages = networkCloudlet.getStages();
+			if (!stages.isEmpty()) {
+				if (stages.get(0).getType() == NetworkConstants.EXECUTION) {
+					stages.get(0).setLength(networkCloudlet.getActualCPUTime());
 				}
-				if (networkCloudlet.stages.get(networkCloudlet.stages.size() - 1).type == NetworkConstants.EXECUTION) {
-					networkCloudlet.stages.get(networkCloudlet.stages.size() - 1).setLength(networkCloudlet.getActualCPUTime());
+				if (stages.get(stages.size() - 1).getType() == NetworkConstants.EXECUTION) {
+					stages.get(stages.size() - 1).setLength(networkCloudlet.getActualCPUTime());
 				}
 			}
 		}

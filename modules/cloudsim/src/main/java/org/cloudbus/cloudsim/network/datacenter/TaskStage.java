@@ -34,7 +34,7 @@ public class TaskStage {
 	/**
 	 * The task type
 	 */
-	private TaskStageStatus type;
+	public int type;
 
 	/**
 	 * The length of the task based on the type of operation performed.
@@ -42,12 +42,12 @@ public class TaskStage {
 	 * -) the execution length, in MI (type == EXECUTION)
 	 * -) the amount of data to be sent, in bytes (type == WAIT_RECV)
 	*/
-	private long taskLength;
+	private double length;
 
 	/** Execution time for this stage.
 	 * @NOTE: this variable is modified at run-time
 	 */
-	private double time;
+	private double processingTime;
 
 	/** Stage (task) id. */
 	private final double stageId;
@@ -61,22 +61,35 @@ public class TaskStage {
 	 */
 	private NetworkCloudlet targetCloudlet;
 	
-	public TaskStage(TaskStageStatus type, long taskLength, double stageId, NetworkCloudlet cl) {
+	public TaskStage(int type, double length, double stageId, NetworkCloudlet cl) {
 		super();
 		this.type = type;
-		this.taskLength = taskLength;
-		this.time = 0;
+		this.length = length;
+		this.processingTime = 0;
 		this.stageId = stageId;
 
 		this.targetCloudlet = cl;
 	}
 
-	public TaskStageStatus getType() { return type; }
+	public double getLength() {
+		return length;
+	}
 
-	public long getTaskLength() { return taskLength; }
+	public void setLength(double length) {
+		this.length = length;
+	}
 
-	public double getTime() { return time; }
-	public void setTime(double time) { this.time = time; }
+	public double getProcessingTime() {
+		return processingTime;
+	}
+
+	public void setProcessingTime(double processingTime) {
+		this.processingTime = processingTime;
+	}
+
+	public int getType() {
+		return type;
+	}
 
 	public double getStageId() { return stageId; }
 

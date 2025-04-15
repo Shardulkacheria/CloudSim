@@ -94,12 +94,16 @@ public class AppCloudlet {
 		return getLateness() < 0;
 	}
 
-        if (!stages.isEmpty()) {
-            if (stages.get(0).type == NetworkConstants.EXECUTION) {
-                stages.get(0).setLength(this.getActualCPUTime());
-            }
-            if (stages.get(stages.size() - 1).type == NetworkConstants.EXECUTION) {
-                stages.get(stages.size() - 1).setLength(this.getActualCPUTime());
-            }
-        }
+	public void updateStagesLength() {
+		for (NetworkCloudlet networkCloudlet : cList) {
+			if (!networkCloudlet.stages.isEmpty()) {
+				if (networkCloudlet.stages.get(0).type == NetworkConstants.EXECUTION) {
+					networkCloudlet.stages.get(0).setLength(networkCloudlet.getActualCPUTime());
+				}
+				if (networkCloudlet.stages.get(networkCloudlet.stages.size() - 1).type == NetworkConstants.EXECUTION) {
+					networkCloudlet.stages.get(networkCloudlet.stages.size() - 1).setLength(networkCloudlet.getActualCPUTime());
+				}
+			}
+		}
+	}
 }

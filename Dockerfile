@@ -8,6 +8,11 @@ COPY modules/cloudsim/pom.xml ./modules/cloudsim/
 COPY modules/cloudsim-examples/pom.xml ./modules/cloudsim-examples/
 COPY modules/cloudsim-examples/src/main/resources/ ./modules/cloudsim-examples/src/main/resources/
 
+# Fix POM files if necessary
+RUN sed -i 's/<n>cloudsim-package<\/n>/<name>cloudsim-package<\/name>/g' pom.xml || true && \
+    sed -i 's/<n>cloudsim<\/n>/<name>cloudsim<\/name>/g' modules/cloudsim/pom.xml || true && \
+    sed -i 's/<n>cloudsim-examples<\/n>/<name>cloudsim-examples<\/name>/g' modules/cloudsim-examples/pom.xml || true
+
 # Download all required dependencies
 RUN apt-get update && \
     apt-get install -y maven && \

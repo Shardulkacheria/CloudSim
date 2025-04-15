@@ -7,8 +7,24 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  actions: write
+  contents: read
+
 jobs:
+  clear-cache:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clear GitHub Actions cache
+      run: |
+        gh extension install actions/gh-actions-cache
+        gh actions-cache delete --all
+        echo "Cache cleared"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   fix-pom-files:
+    needs: clear-cache
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code

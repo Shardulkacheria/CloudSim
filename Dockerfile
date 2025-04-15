@@ -1,4 +1,4 @@
-FROM eclipse-temurin:8-jdk
+FROM eclipse-temurin:16-jdk
 
 # Install Maven
 RUN apt-get update && \
@@ -9,6 +9,7 @@ RUN apt-get update && \
 # Set JAVA_HOME explicitly
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
+ENV MAVEN_OPTS="-Dmaven.compiler.release=16"
 
 WORKDIR /app
 
@@ -20,11 +21,11 @@ RUN mvn clean install -N
 
 # Build the CloudSim module
 RUN cd modules/cloudsim && \
-    mvn clean install
+    mvn clean install -Dmaven.compiler.release=16
 
 # Build the CloudSim examples module
 RUN cd modules/cloudsim-examples && \
-    mvn clean package && \
+    mvn clean package -Dmaven.compiler.release=16 && \
     mvn assembly:single -DdescriptorId=jar-with-dependencies
 
 # Set the entry point to run the AutoScalingExample by default

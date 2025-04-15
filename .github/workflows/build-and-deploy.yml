@@ -36,6 +36,7 @@ jobs:
           pom.xml
           modules/cloudsim/pom.xml
           modules/cloudsim-examples/pom.xml
+        retention-days: 1
   
   build:
     needs: fix-pom-files
@@ -53,8 +54,8 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: 16
-        cache: maven
+        java-version: '16'
+        cache: 'maven'
     
     - name: Build with Maven
       run: mvn -B clean package
@@ -67,10 +68,10 @@ jobs:
         echo "Checking for JAR files..."
         find . -name "*.jar" | sort
     
-    - name: Run AutoScalingExample
+    - name: Run CloudSimMultiExtensionExample2
       run: |
-        echo "Running AutoScalingExample..."
-        java -cp "modules/cloudsim/target/cloudsim-7.0.0-alpha.jar:modules/cloudsim-examples/target/cloudsim-examples-7.0.0-alpha.jar" org.cloudbus.cloudsim.examples.AutoScalingExample
+        echo "Running CloudSimMultiExtensionExample2..."
+        java -cp "modules/cloudsim/target/cloudsim-7.0.0-alpha.jar:modules/cloudsim-examples/target/cloudsim-examples-7.0.0-alpha.jar" org.cloudbus.cloudsim.examples.CloudSimMultiExtensionExample2
     
     - name: Upload JAR files
       uses: actions/upload-artifact@v4
@@ -79,19 +80,24 @@ jobs:
         path: |
           modules/cloudsim/target/cloudsim-7.0.0-alpha.jar
           modules/cloudsim-examples/target/cloudsim-examples-7.0.0-alpha.jar
+        retention-days: 1
 
   docker:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    permissions:
+      contents: read
+      packages: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Download fixed code
+    - name: Download JAR files
       uses: actions/download-artifact@v4
       with:
-        name: fixed-code
+        name: jar-files
+        path: modules
     
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -100,7 +106,7 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ github.repository_owner }}
+        username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Extract metadata for Docker
@@ -126,8 +132,11 @@ jobs:
 
   release:
     needs: [build, docker]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    permissions:
+      contents: write
+      packages: read
     steps:
     - name: Download JAR files
       uses: actions/download-artifact@v4

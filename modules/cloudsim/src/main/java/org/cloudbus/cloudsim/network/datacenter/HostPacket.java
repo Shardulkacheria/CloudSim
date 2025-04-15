@@ -66,7 +66,7 @@ public class HostPacket {
 			receiverCloudletId = cl.stages.get(taskStageId).getTargetCloudlet().getCloudletId();
 
 			// packet info
-			data = cl.stages.get(taskStageId).getTaskLength();
+			data = (long) cl.stages.get(taskStageId).getTaskLength();
 
 			sendTime = CloudSim.clock();
 			recvTime = -1;

@@ -57,8 +57,8 @@ public class AppCloudlet {
 	 */
 	public List<NetworkCloudlet> getSourceCloudlets() {
 		return cList.stream()
-					.filter(networkCloudlet -> networkCloudlet.getStages().get(0).getType() != NetworkConstants.WAIT_RECV)
-					.filter(networkCloudlet -> networkCloudlet.getStages().get(0).getType() != NetworkConstants.WAIT_SEND)
+					.filter(networkCloudlet -> networkCloudlet.getStages().get(0).getType() != TaskStage.TaskStageStatus.WAIT_RECV)
+					.filter(networkCloudlet -> networkCloudlet.getStages().get(0).getType() != TaskStage.TaskStageStatus.WAIT_SEND)
 					.toList();
 	}
 
@@ -68,8 +68,8 @@ public class AppCloudlet {
 	 */
 	public List<NetworkCloudlet> getSinkCloudlets() {
 		return cList.stream()
-				.filter(networkCloudlet -> networkCloudlet.getStages().get(networkCloudlet.getStages().size() - 1).getType() != NetworkConstants.WAIT_RECV)
-				.filter(networkCloudlet -> networkCloudlet.getStages().get(networkCloudlet.getStages().size() - 1).getType() != NetworkConstants.WAIT_SEND)
+				.filter(networkCloudlet -> networkCloudlet.getStages().get(networkCloudlet.getStages().size() - 1).getType() != TaskStage.TaskStageStatus.WAIT_RECV)
+				.filter(networkCloudlet -> networkCloudlet.getStages().get(networkCloudlet.getStages().size() - 1).getType() != TaskStage.TaskStageStatus.WAIT_SEND)
 				.toList();
 	}
 
@@ -95,10 +95,10 @@ public class AppCloudlet {
 		for (NetworkCloudlet networkCloudlet : cList) {
 			List<TaskStage> stages = networkCloudlet.getStages();
 			if (!stages.isEmpty()) {
-				if (stages.get(0).getType() == NetworkConstants.EXECUTION) {
+				if (stages.get(0).getType() == TaskStage.TaskStageStatus.EXECUTION) {
 					stages.get(0).setLength(networkCloudlet.getActualCPUTime());
 				}
-				if (stages.get(stages.size() - 1).getType() == NetworkConstants.EXECUTION) {
+				if (stages.get(stages.size() - 1).getType() == TaskStage.TaskStageStatus.EXECUTION) {
 					stages.get(stages.size() - 1).setLength(networkCloudlet.getActualCPUTime());
 				}
 			}

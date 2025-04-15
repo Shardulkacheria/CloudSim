@@ -1,0 +1,102 @@
+name: Build and Run with Java 8
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '8'
+        cache: maven
+    
+    - name: Fix POM files
+      run: |
+        # Check if the POM files need fixing
+        if grep -q "<n>" pom.xml; then
+          echo "Fixing main pom.xml"
+          sed -i 's/<n>cloudsim-package<\/n>/<name>cloudsim-package<\/name>/g' pom.xml
+        fi
+        
+        if grep -q "<n>" modules/cloudsim/pom.xml; then
+          echo "Fixing cloudsim module pom.xml"
+          sed -i 's/<n>cloudsim<\/n>/<name>cloudsim<\/name>/g' modules/cloudsim/pom.xml
+        fi
+        
+        if grep -q "<n>" modules/cloudsim-examples/pom.xml; then
+          echo "Fixing cloudsim-examples module pom.xml"
+          sed -i 's/<n>cloudsim-examples<\/n>/<name>cloudsim-examples<\/name>/g' modules/cloudsim-examples/pom.xml
+        fi
+        
+        echo "POM files after fixing:"
+        grep -n "<name>" pom.xml || echo "Name tag not found in root pom.xml"
+      shell: bash
+    
+    - name: Display Java version
+      run: |
+        echo "Java version in use:"
+        java -version
+      shell: bash
+    
+    - name: Build CloudSim core module and install to local repository
+      run: |
+        echo "Building CloudSim core module:"
+        cd modules/cloudsim
+        mvn clean install -DskipTests
+      shell: bash
+    
+    - name: Build CloudSim examples module
+      run: |
+        echo "Building CloudSim examples module:"
+        cd modules/cloudsim-examples
+        mvn clean package
+      shell: bash
+    
+    - name: Run AutoScalingExample
+      run: |
+        echo "Running AutoScalingExample:"
+        cd modules/cloudsim-examples
+        mvn exec:java -Dexec.mainClass="org.cloudbus.cloudsim.examples.AutoScalingExample" -Dexec.cleanupDaemonThreads=false
+      shell: bash
+    
+    - name: Create runnable JAR package
+      run: |
+        echo "Creating runnable JAR package with dependencies:"
+        cd modules/cloudsim-examples
+        mvn assembly:single -DdescriptorId=jar-with-dependencies
+      shell: bash
+    
+    - name: Upload JAR artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: cloudsim-jars
+        path: |
+          modules/cloudsim/target/*.jar
+          modules/cloudsim-examples/target/*.jar
+    
+    - name: Test running JAR with dependencies
+      run: |
+        echo "Testing the jar-with-dependencies:"
+        cd modules/cloudsim-examples/target
+        # List all generated JAR files
+        ls -la *.jar
+        # Run the JAR file with dependencies
+        JAR_FILE=$(find . -name "*-jar-with-dependencies.jar")
+        if [ -n "$JAR_FILE" ]; then
+          java -jar $JAR_FILE
+          echo "Successfully executed the JAR file"
+        else
+          echo "JAR file with dependencies not found"
+        fi
+      shell: bash 

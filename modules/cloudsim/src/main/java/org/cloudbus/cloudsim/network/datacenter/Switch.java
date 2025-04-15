@@ -225,7 +225,7 @@ public class Switch extends SimEntity {
 
 			// Send to aggregate level
 			// ASSUMPTION: EACH EDGE is Connected to one aggregate level switch only
-			Switch sw = uplinkSwitches.getFirst();
+			Switch sw = uplinkSwitches.get(0);
 			pktsToUplinkSwitches.computeIfAbsent(sw.getId(), k -> new ArrayList<>()).add(npkt);
 		}
 		else if (level == SwitchLevel.AGGR_LEVEL) { // packet received from edge router
@@ -236,7 +236,7 @@ public class Switch extends SimEntity {
             if (downlinkSwitches.stream().anyMatch(sw -> sw.getId() == switchId)) {
 				pktsToDownlinkSwitches.computeIfAbsent(switchId, k -> new ArrayList<>()).add(npkt);
 			} else {// send to up to root level (ASSUMPTION: EACH EDGE is Connected to one aggregate level switch only)
-				Switch sw = uplinkSwitches.getFirst();
+				Switch sw = uplinkSwitches.get(0);
 				pktsToUplinkSwitches.computeIfAbsent(sw.getId(), k -> new ArrayList<>()).add(npkt);
 			}
 		}

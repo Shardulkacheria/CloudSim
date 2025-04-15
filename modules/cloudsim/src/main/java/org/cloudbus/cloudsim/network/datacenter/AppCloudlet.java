@@ -93,4 +93,13 @@ public class AppCloudlet {
 	public boolean isDeadlineMissed() {
 		return getLateness() < 0;
 	}
+
+        if (!stages.isEmpty()) {
+            if (stages.get(0).type == NetworkConstants.EXECUTION) {
+                stages.get(0).setLength(this.getActualCPUTime());
+            }
+            if (stages.get(stages.size() - 1).type == NetworkConstants.EXECUTION) {
+                stages.get(stages.size() - 1).setLength(this.getActualCPUTime());
+            }
+        }
 }

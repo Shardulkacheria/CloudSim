@@ -29,10 +29,13 @@ jobs:
     - name: Display Java version
       run: java -version
     
+    - name: Build root project
+      run: mvn clean install -N
+    
     - name: Build and install cloudsim module
       run: |
         cd modules/cloudsim
-        mvn clean install -DskipTests
+        mvn clean install
     
     - name: Build cloudsim-examples module
       run: |

@@ -15,9 +15,12 @@ WORKDIR /app
 # Copy the project files
 COPY . .
 
+# Build the root project first
+RUN mvn clean install -N
+
 # Build the CloudSim module
 RUN cd modules/cloudsim && \
-    mvn clean install -DskipTests
+    mvn clean install
 
 # Build the CloudSim examples module
 RUN cd modules/cloudsim-examples && \

@@ -1,5 +1,15 @@
 FROM eclipse-temurin:16-jdk
 
+# Install Maven
+RUN apt-get update && \
+    apt-get install -y maven && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set JAVA_HOME explicitly
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
 WORKDIR /app
 
 # Copy the project files

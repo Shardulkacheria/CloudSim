@@ -1,25 +1,26 @@
 package org.cloudbus.cloudsim.container.containerVmProvisioners;
 
-import org.cloudbus.cloudsim.container.core.PowerContainerHost;
+import org.cloudbus.cloudsim.VmAllocationPolicy;
+import org.cloudbus.cloudsim.Host;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public abstract class PowerContainerVmAllocationPolicyMigrationAbstractContainerHostSelectionUnderUtilizedAdded 
     extends PowerContainerVmAllocationPolicyMigrationAbstract {
 
-    public PowerContainerVmAllocationPolicyMigrationAbstractContainerHostSelectionUnderUtilizedAdded(List<? extends PowerContainerHost> hostList) {
+    public PowerContainerVmAllocationPolicyMigrationAbstractContainerHostSelectionUnderUtilizedAdded(List<? extends Host> hostList) {
         super(hostList);
     }
 
-    protected PowerContainerHost findHostForVm(List<PowerContainerHost> switchedOffHosts) {
-        if (!switchedOffHosts.isEmpty()) {
-            PowerContainerHost host = switchedOffHosts.get(switchedOffHosts.size()-1);
-            return host;
-        }
-        return null;
+    @Override
+    protected Map<String, Object> findHostForVm() {
+        Map<String, Object> result = new HashMap<>();
+        // Implementation details to be added by concrete classes
+        return result;
     }
 
-    @Override
-    protected PowerContainerHost findHostForVmUnderUtilized(List<PowerContainerHost> underUtilizedHostList) {
+    protected Host findHostForVmUnderUtilized(List<Host> underUtilizedHostList) {
         if (!underUtilizedHostList.isEmpty()) {
             return underUtilizedHostList.get(0);
         }

@@ -12,9 +12,7 @@ import org.cloudbus.cloudsim.core.GuestEntity;
 import org.cloudbus.cloudsim.core.HostEntity;
 import org.cloudbus.cloudsim.core.PowerGuestEntity;
 import org.cloudbus.cloudsim.selectionPolicies.SelectionPolicy;
-import org.cloudbus.cloudsim.lists.HostList;
 import org.cloudbus.cloudsim.power.PowerHost;
-
 import java.util.*;
 
 /**
@@ -35,7 +33,6 @@ public abstract class PowerContainerVmAllocationPolicyMigrationAbstractContainer
         setUnderUtilizationThr(underUtilizationThr);
     }
 
-
     @Override
     /**
      * Gets the under utilized host.
@@ -43,17 +40,12 @@ public abstract class PowerContainerVmAllocationPolicyMigrationAbstractContainer
      * @param excludedHosts the excluded hosts
      * @return the under utilized host
      */
-    protected PowerHost getUnderUtilizedHost(Set<? extends Host> excludedHosts) {
-
-        List<Host> underUtilizedHostList = getUnderUtilizedHostList(excludedHosts);
+    protected PowerHost getUnderUtilizedHost(List<? extends PowerHost> excludedHosts) {
+        List<PowerHost> underUtilizedHostList = getUnderUtilizedHostList(excludedHosts);
         if (underUtilizedHostList.isEmpty()) {
-
             return null;
         }
-        HostList.sortByCpuUtilizationDescending(underUtilizedHostList);
-//        Log.print(String.format("The under Utilized Hosts are %d", underUtilizedHostList.size()));
-
-        return (PowerHost) underUtilizedHostList.getFirst();
+        return underUtilizedHostList.get(underUtilizedHostList.size()-1);
     }
 
     @Override
@@ -63,8 +55,8 @@ public abstract class PowerContainerVmAllocationPolicyMigrationAbstractContainer
      * @param excludedHosts the excluded hosts
      * @return the under utilized host
      */
-    protected List<Host> getUnderUtilizedHostList(Set<? extends Host> excludedHosts) {
-        List<Host> underUtilizedHostList = new ArrayList<>();
+    protected List<PowerHost> getUnderUtilizedHostList(List<? extends PowerHost> excludedHosts) {
+        List<PowerHost> underUtilizedHostList = new ArrayList<>();
         for (PowerHost host : this.<PowerHost>getHostList()) {
             if (excludedHosts.contains(host)) {
                 continue;

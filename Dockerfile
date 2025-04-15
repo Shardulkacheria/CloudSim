@@ -1,4 +1,4 @@
-FROM eclipse-temurin:16-jdk
+FROM eclipse-temurin:8-jdk
 
 # Install Maven
 RUN apt-get update && \
